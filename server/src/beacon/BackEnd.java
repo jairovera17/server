@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,15 +19,20 @@ import java.util.logging.Logger;
  * @author jairo
  */
 public class BackEnd {
+    static int id = 10;
     static int portNumber = 5000;
     static String hostname = "127.0.0.1";
+    static String localname = "127.0.0.10";
+    static backEndStatus backStatus;
+    
     public static void main(String[] args){
         
+        backStatus = new backEndStatus(new Random().nextInt()%100+1000, localname, 0);
         backBeacon();
     }
     
     private static void  backBeacon(){
-        
+        String ack="";
         try {
             
             do{
@@ -34,7 +40,12 @@ public class BackEnd {
             PrintWriter out = new PrintWriter(backSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(backSocket.getInputStream()));
             
-            out.println("memes listos :v");
+            backStatus.lastLog=System.currentTimeMillis();
+            
+            
+            out.println(backStatus.toString());
+            ack = in.readLine();
+            System.out.println("Front dice: "+ack);
             
             
             }while(true);
